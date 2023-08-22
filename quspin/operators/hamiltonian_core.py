@@ -1232,6 +1232,42 @@ class hamiltonian(object):
 		# calculate eigh
 		return _la.eigh(H_dense,**eigh_args)
 
+	def eig(self,time=0,**eig_args):
+		"""Computes COMPLETE eigensystem of any `hamiltonian` operator.
+
+		This function method solves for all eigenvalues and eigenvectors. It calls 
+		`numpy.linalg.eig <https://docs.scipy.org/doc/numpy-1.10.1/reference/generated/numpy.linalg.eig.html>`_, 
+		and uses wrapped LAPACK functions which are contained in the module py_lapack.
+
+		Notes
+		-----
+
+		Parameters
+		-----------
+		time : float
+			Time to evalute the `hamiltonian` operator at (if time dependent). Default is `time = 0.0`.
+		eigh_args : 
+			For all additional arguments see documentation of `numpy.linalg.eig <https://docs.scipy.org/doc/numpy-1.10.1/reference/generated/numpy.linalg.eig.html>`_.
+			
+		Returns
+		--------
+		tuple
+			Tuple containing the `(eigenvalues, eigenvectors)` of the `hamiltonian` operator.
+
+		Examples
+		---------
+		>>> eigenvalues,eigenvectors = H.eig(time=time,**eigh_args)
+
+		"""
+		if self.Ns <= 0:
+			return _np.array([],dtype=self._dtype).real,_np.array([[]],dtype=self._dtype)
+
+		eig_args["overwrite_a"] = True
+		# fill dense array with hamiltonian
+		H_dense = self.todense(time=time)
+		# calculate eigh
+		return _la.eig(H_dense,**eig_args)
+
 	def eigvalsh(self,time=0,**eigvalsh_args):
 		"""Computes ALL eigenvalues of hermitian `hamiltonian` operator using DENSE hermitian methods.
 
